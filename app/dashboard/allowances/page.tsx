@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCustomToast } from "@/app/lib/toast";
 import {
     Table, Thead, Tbody, Tr, Th, Td, Input, Button, Box, Select, IconButton, Checkbox,
-    Menu, MenuButton, MenuList, MenuItem, HStack
+    Menu, MenuButton, MenuList, MenuItem, HStack, Heading, Divider
 } from "@chakra-ui/react";
 import {
     useReactTable,
@@ -49,7 +49,7 @@ export default function Page() {
                 accessorKey: "aktif",
                 header: "Active",
                 cell: ({ row }) => (
-                    <Checkbox isChecked={row.original.aktif === 1} isReadOnly />
+                    <Checkbox isChecked={row.original.aktif === 1} colorScheme="red" isReadOnly />
                 ),
             },
             {
@@ -57,7 +57,7 @@ export default function Page() {
                 header: "Actions",
                 cell: ({ row }) => (
                     <Menu>
-                        <MenuButton as={Button} fontSize={12} size="sm" rightIcon={<TriangleDownIcon />}>
+                        <MenuButton as={Button} fontSize={12} size="xs" rightIcon={<TriangleDownIcon />}>
 
                         </MenuButton>
                         <MenuList fontSize={12}>
@@ -77,6 +77,8 @@ export default function Page() {
 
     return (
         <Box p={4} fontSize={12}>
+            <Heading as='h5' size='sm'>Allowances</Heading>
+            <Divider borderColor="crimson" borderWidth="2px" my={4} />
             {/* Input Pencarian */}
             <Input
                 size="sm"
@@ -153,6 +155,7 @@ export default function Page() {
 
                 <Button size="sm" colorScheme='red' onClick={() => router.push("/dashboard/allowances/create")}>New Allowance</Button>
             </HStack>
+            <Divider borderColor="crimson" borderWidth="2px" my={4} />
         </Box>
     );
 }
