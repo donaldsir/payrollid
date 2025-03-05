@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     return (
-        <Flex h="100vh">
+        <Flex minHeight="100dvh">
             {/* Sidebar untuk Desktop */}
             <Box
                 w={{ base: "0", md: "250px" }} // Sembunyikan di mobile, tampil di desktop
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Drawer>
 
             {/* Area Konten */}
-            <Box flex="1" p="6">
+            <Box flex="1" p="6" overflowY="auto"> {/* Tambahkan `overflowY="auto"` */}
                 {/* Navbar */}
                 <HStack justify="space-between" mb="4">
                     {/* Tombol Menu untuk Mobile */}
@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </HStack>
 
                 {/* Main Content */}
-                <Box bg="gray.50" p="4" borderRadius="md" h="full">
+                <Box p="4" borderRadius="md" h="full">
                     {children}
                 </Box>
             </Box>
@@ -77,7 +77,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     <AccordionPanel pb={2}>
                         <VStack align="start" spacing={2} pl={4}>
                             <NavItem href="/dashboard/allowances" label="Allowances" onClose={onClose} />
-                            <NavItem href="/dashboard/users/add" label="Tambah Pengguna" onClose={onClose} />
+                            <NavItem href="/dashboard/etr" label="Effective Tax Rate" onClose={onClose} />
                         </VStack>
                     </AccordionPanel>
                 </AccordionItem>

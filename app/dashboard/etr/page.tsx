@@ -33,7 +33,7 @@ export default function Page() {
 
     const getData = useCallback(async () => {
         setLoading(true)
-        const res = await fetch(`/api/allowances`, { method: "GET" });
+        const res = await fetch(`/api/etr`, { method: "GET" });
         const data = await res.json();
         setDataTable(data);
         setLoading(false)
@@ -51,7 +51,7 @@ export default function Page() {
         if (!selectedId) return;
 
         try {
-            const res = await fetch(`/api/allowances/${selectedId}`, { method: "DELETE" });
+            const res = await fetch(`/api/etr/${selectedId}`, { method: "DELETE" });
             const data = await res.json();
 
             if (data.success) {
@@ -74,17 +74,8 @@ export default function Page() {
     const table = useReactTable({
         data: dataTable,
         columns: [
-            { accessorKey: "nama_tunjangan", header: "Name" },
+            { accessorKey: "nama_etr", header: "Name" },
             { accessorKey: "keterangan", header: "Description" },
-            {
-                accessorKey: "aktif",
-                header: "Active",
-                cell: ({ row }) => (
-                    <Box display="flex" justifyContent="center">
-                        <Checkbox isChecked={row.original.aktif === 1} colorScheme="red" isReadOnly />
-                    </Box>
-                ),
-            },
             {
                 accessorKey: "aksi",
                 header: "Actions",
@@ -95,7 +86,7 @@ export default function Page() {
                                 <PiDotsThreeOutlineVerticalFill />
                             </MenuButton>
                             <MenuList fontSize={12}>
-                                <MenuItem onClick={() => router.push(`/dashboard/allowances/${row.original.id}`)}>Edit</MenuItem>
+                                <MenuItem onClick={() => router.push(`/dashboard/etr/${row.original.id}`)}>Edit</MenuItem>
                                 <MenuItem onClick={() => {
                                     setSelectedId(row.original.id)
                                     setDeleteOpen(true)
@@ -117,7 +108,7 @@ export default function Page() {
     return (
         <Box p={4} fontSize={12}>
             {loading && <LoadingOverlay />}
-            <Heading as='h5' size='sm'>Allowances</Heading>
+            <Heading as='h5' size='sm'>Effective Tax Rate</Heading>
             <Divider borderColor="crimson" borderWidth="2px" my={4} />
             {/* Input Pencarian */}
             <Input
@@ -193,7 +184,7 @@ export default function Page() {
                     </Select>
                 </Box>
 
-                <Button size="sm" colorScheme='red' onClick={() => router.push("/dashboard/allowances/create")}>New Allowance</Button>
+                <Button size="sm" colorScheme='red' onClick={() => router.push("/dashboard/etr/create")}>New Effective Tax Rate</Button>
             </HStack>
 
             <Divider borderColor="crimson" borderWidth="2px" my={4} />
