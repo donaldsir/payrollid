@@ -22,6 +22,7 @@ import {
   IconButton,
   Card,
   CardBody,
+  Box
 } from "@chakra-ui/react";
 import { ETRPTKP, ETRBruto } from "@/app/interfaces";
 import { BiTrash } from "react-icons/bi";
@@ -58,29 +59,44 @@ export default function Page() {
     setNamaETR("");
     setKeterangan("");
     setTanggungan(0);
+    setETRPTKP([]);
+    setETRBruto([]);
   };
 
   const insertPTKP = async () => {
-    const newItem: ETRPTKP = {
-      id: Date.now(),
-      id_etr: 0,
-      status: status,
-      tanggungan: tanggungan,
-      ptkp: nilai_ptkp,
-    };
-    setETRPTKP((prev) => [...prev, newItem]);
+    const filtered = etr_ptkp.filter(etr_ptkp => etr_ptkp.status === status && etr_ptkp.tanggungan === tanggungan);
+
+    if (filtered.length === 0) {
+      const newItem: ETRPTKP = {
+        id: Date.now(),
+        id_etr: 0,
+        status: status,
+        tanggungan: tanggungan,
+        ptkp: nilai_ptkp,
+      };
+      setETRPTKP((prev) => [...prev, newItem]);
+    } else {
+      showToast("Duplicate entry", "error")
+    }
   };
 
   const insertBruto = () => {
-    const newItem: ETRBruto = {
-      id: Date.now(),
-      id_etr: 0,
-      minimum: minimum,
-      maksimum: maksimum,
-      persentasi: persentasi,
-    };
-    setMinimum(maksimum + 1);
-    setETRBruto((prev) => [...prev, newItem]);
+    const filtered = etr_bruto.filter(etr_bruto => etr_bruto.minimum === minimum && etr_bruto.maksimum === maksimum);
+
+    if (filtered.length === 0) {
+      const newItem: ETRBruto = {
+        id: Date.now(),
+        id_etr: 0,
+        minimum: minimum,
+        maksimum: maksimum,
+        persentasi: persentasi,
+      };
+      setMinimum(maksimum + 1);
+      setETRBruto((prev) => [...prev, newItem]);
+    } else {
+      showToast("Duplicate entry", "error")
+    }
+
   };
 
   const deletePTKP = (id: number) => {
@@ -120,7 +136,12 @@ export default function Page() {
         };
         newItems.push(newItem);
       }
-      setETRBruto(newItems);
+
+      const uniqueItems = newItems.filter((item, index, self) =>
+        index === self.findIndex(u => u.minimum === item.minimum && u.maksimum === item.maksimum)
+      );
+
+      setETRBruto(uniqueItems);
     };
 
     reader.readAsBinaryString(file);
@@ -147,7 +168,6 @@ export default function Page() {
       if (data.success) {
         showToast(data.message, "success");
         reset();
-        router.back();
       } else {
         showToast(data.error, "error");
       }
@@ -162,17 +182,13 @@ export default function Page() {
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        store(e);
-      }}
-    >
+    <form onSubmit={(e) => { store(e); }}>
       {loading && <LoadingOverlay />}
       <Heading as="h5" size="sm">
         New Effective Tax Rate
       </Heading>
       <Divider borderColor="crimson" borderWidth="2px" my={4} />
-      <Card>
+      <Card border="1px" borderColor="gray">
         <CardBody>
           <Flex direction={{ base: "column", md: "row" }} gap={4} my={6} alignItems="center">
             <FormControl flex="2" isRequired>
@@ -202,7 +218,7 @@ export default function Page() {
         </CardBody>
       </Card>
 
-      <Card mt={4}>
+      <Card mt={4} border="1px" borderColor="gray">
         <CardBody>
           <Flex direction={{ base: "column", md: "row" }} gap={4} my={6} alignItems="center">
             <FormControl flex="2">
@@ -248,38 +264,41 @@ export default function Page() {
             </FormControl>
           </Flex>
 
-          <Table variant="striped" size="sm" colorScheme="gray">
-            <Thead>
-              <Tr>
-                <Th></Th>
-                <Th>Marital Status</Th>
-                <Th textAlign="right">Number of Dependents</Th>
-                <Th textAlign="right">Non-Taxable Income</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {etr_ptkp.map((row, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <IconButton
-                      size="xs"
-                      aria-label="Delete"
-                      icon={<BiTrash />}
-                      colorScheme="red"
-                      onClick={() => deletePTKP(row.id)}
-                    />
-                  </Td>
-                  <Td>{getMaritalStatusById(row.status)?.label}</Td>
-                  <Td textAlign="right">{row.tanggungan}</Td>
-                  <Td textAlign="right">{row.ptkp.toLocaleString("id-ID")}</Td>
+          <Box overflowX="auto">
+            <Table variant="striped" size="sm" colorScheme="gray">
+              <Thead>
+                <Tr>
+                  <Th></Th>
+                  <Th>Marital Status</Th>
+                  <Th textAlign="right">Number of Dependents</Th>
+                  <Th textAlign="right">Non-Taxable Income</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {etr_ptkp.map((row, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <IconButton
+                        size="xs"
+                        aria-label="Delete"
+                        icon={<BiTrash />}
+                        colorScheme="red"
+                        onClick={() => deletePTKP(row.id)}
+                      />
+                    </Td>
+                    <Td>{getMaritalStatusById(row.status)?.label}</Td>
+                    <Td textAlign="right">{row.tanggungan}</Td>
+                    <Td textAlign="right">{row.ptkp.toLocaleString("id-ID")}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+
         </CardBody>
       </Card>
 
-      <Card mt={4}>
+      <Card mt={4} border="1px" borderColor="gray">
         <CardBody>
           <Flex direction={{ base: "column", md: "row" }} gap={4} my={6} alignItems="center">
             <FormControl flex="2">
@@ -331,34 +350,37 @@ export default function Page() {
             </FormControl>
           </Flex>
 
-          <Table variant="striped" size="sm" colorScheme="gray">
-            <Thead>
-              <Tr>
-                <Th></Th>
-                <Th textAlign="right">Minimum Taxable Income</Th>
-                <Th textAlign="right">Maximum Taxable Income</Th>
-                <Th textAlign="right">Percentage</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {etr_bruto.map((row, index) => (
-                <Tr key={index}>
-                  <Td>
-                    <IconButton
-                      size="xs"
-                      aria-label="Delete"
-                      icon={<BiTrash />}
-                      onClick={() => deleteBruto(row.id)}
-                      colorScheme="red"
-                    />
-                  </Td>
-                  <Td textAlign="right">{row.minimum.toLocaleString("id-ID")}</Td>
-                  <Td textAlign="right">{row.maksimum.toLocaleString("id-ID")}</Td>
-                  <Td textAlign="right">{row.persentasi.toLocaleString("id-ID")}</Td>
+          <Box overflowX="auto">
+            <Table variant="striped" size="sm" colorScheme="gray">
+              <Thead>
+                <Tr>
+                  <Th></Th>
+                  <Th textAlign="right">Minimum Taxable Income</Th>
+                  <Th textAlign="right">Maximum Taxable Income</Th>
+                  <Th textAlign="right">Percentage</Th>
                 </Tr>
-              ))}
-            </Tbody>
-          </Table>
+              </Thead>
+              <Tbody>
+                {etr_bruto.map((row, index) => (
+                  <Tr key={index}>
+                    <Td>
+                      <IconButton
+                        size="xs"
+                        aria-label="Delete"
+                        icon={<BiTrash />}
+                        onClick={() => deleteBruto(row.id)}
+                        colorScheme="red"
+                      />
+                    </Td>
+                    <Td textAlign="right">{row.minimum.toLocaleString("id-ID")}</Td>
+                    <Td textAlign="right">{row.maksimum.toLocaleString("id-ID")}</Td>
+                    <Td textAlign="right">{row.persentasi.toLocaleString("id-ID")}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+
         </CardBody>
       </Card>
 

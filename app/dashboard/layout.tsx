@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </HStack>
 
                 {/* Main Content */}
-                <Box p="4" borderRadius="md" h="full">
+                <Box py="2" borderRadius="md" h="full">
                     {children}
                 </Box>
             </Box>
@@ -77,6 +77,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     <AccordionPanel pb={2}>
                         <VStack align="start" spacing={2} pl={4}>
                             <NavItem href="/dashboard/allowances" label="Allowances" onClose={onClose} />
+                            <NavItem href="/dashboard/employee" label="List of Employee" onClose={onClose} />
                             <NavItem href="/dashboard/etr" label="Effective Tax Rate" onClose={onClose} />
                         </VStack>
                     </AccordionPanel>

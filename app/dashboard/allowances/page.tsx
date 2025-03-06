@@ -129,34 +129,37 @@ export default function Page() {
             />
 
             {/* Tabel */}
-            <Table variant='striped' size="sm" colorScheme="gray">
-                <Thead >
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <Th key={header.id} textAlign={["Active", "Actions"].includes(header.column.columnDef.header as string) ? "center" : "left"}>
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                </Th>
-                            ))}
-                        </Tr>
-                    ))}
-                </Thead>
-                <Tbody>
-                    {table.getRowModel().rows.map((row) => (
-                        <Tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                                <Td key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </Td>
-                            ))}
-                        </Tr>
-                    ))}
-                </Tbody>
-            </Table>
+            <Box overflowX="auto">
+                <Table variant='striped' size="sm" colorScheme="gray">
+                    <Thead >
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <Tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <Th key={header.id} textAlign={["Active", "Actions"].includes(header.column.columnDef.header as string) ? "center" : "left"}>
+                                        {flexRender(header.column.columnDef.header, header.getContext())}
+                                    </Th>
+                                ))}
+                            </Tr>
+                        ))}
+                    </Thead>
+                    <Tbody>
+                        {table.getRowModel().rows.map((row) => (
+                            <Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => (
+                                    <Td key={cell.id}>
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </Td>
+                                ))}
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
+            </Box>
+
 
             {/* Kontrol Pagination */}
-            <HStack justify="space-between" mt="4">
-                <Box display="flex" alignItems="center" >
+            <HStack justify="space-between" mt="4" flexDirection={{ base: "column", md: "row" }} align="stretch">
+                <Box display="flex" alignItems="center" justifyContent={{ base: "center", md: "flex-start" }} mb={{ base: 4, md: 0 }}>
                     <IconButton
                         aria-label='Prev'
                         onClick={() => table.previousPage()}
@@ -193,7 +196,15 @@ export default function Page() {
                     </Select>
                 </Box>
 
-                <Button size="sm" colorScheme='red' onClick={() => router.push("/dashboard/allowances/create")}>New Allowance</Button>
+                <Button
+                    size="sm"
+                    colorScheme='red'
+                    onClick={() => router.push("/dashboard/allowances/create")}
+                    alignSelf={{ base: "center", md: "flex-end" }}
+                    w={{ base: "full", md: "auto" }}
+                >
+                    New Allowance
+                </Button>
             </HStack>
 
             <Divider borderColor="crimson" borderWidth="2px" my={4} />

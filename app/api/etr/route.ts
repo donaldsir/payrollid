@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/app/lib/db';
 import QueryBuilder from '@/app/lib/qb';
-import { ETRBruto, ETRPTKP } from '@/app/interfaces';
 
 export async function GET() {
     try {
@@ -11,10 +10,10 @@ export async function GET() {
         return NextResponse.json(rows)
     } catch (error) {
         if (typeof error === "string") {
-            console.error("Error inserting data:", error.toUpperCase());
+            console.error("Error fetching data:", error.toUpperCase());
             return NextResponse.json({ success: false, error: error.toUpperCase() }, { status: 500 });
         } else if (error instanceof Error) {
-            console.error("Error inserting data:", error.message);
+            console.error("Error fetching data:", error.message);
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
     }
@@ -32,8 +31,6 @@ export async function POST(req: NextRequest) {
 
         const etr_bruto: any = formData.get("etr_bruto");
         const json_etr_bruto = JSON.parse(etr_bruto);
-
-
 
         // Validasi data
         if (!nama_etr) {
@@ -55,13 +52,26 @@ export async function POST(req: NextRequest) {
         qbPTKP.column('ptkp')
 
         for (const dt of json_etr_ptkp) {
-            pool.execute(qbPTKP.insert(),
-                [
-                    insertedId,
-                    dt.status,
-                    dt.tanggungan,
-                    dt.ptkp
-                ])
+            const qbCheck = new QueryBuilder('etr_ptkp')
+            qbCheck.where('status')
+            qbCheck.where('tanggungan')
+            const [rows]: any = await pool.query(qbCheck.query(), [dt.status, dt.tanggungan]);
+
+            if (rows.length === 0) {
+                pool.execute(qbPTKP.insert(),
+                    [
+                        insertedId,
+                        dt.status,
+                        dt.tanggungan,
+                        dt.ptkp
+                    ])
+            } else {
+                const qbDelete = new QueryBuilder("etr");
+                qbDelete.where("id");
+                await pool.execute(qbDelete.delete(), [insertedId]);
+
+                return NextResponse.json({ success: false, error: "Duplicate Entry" }, { status: 500 });
+            }
         }
 
         // insert etr bruto
@@ -72,16 +82,22 @@ export async function POST(req: NextRequest) {
         qbBruto.column('persentasi')
 
         for (const dt of json_etr_bruto) {
-            pool.execute(qbBruto.insert(),
-                [
-                    insertedId,
-                    dt.minimum,
-                    dt.maksimum,
-                    dt.persentasi
-                ])
+            const qbCheck = new QueryBuilder('etr_bruto')
+            qbCheck.where('id_etr')
+            qbCheck.where('minimum')
+            qbCheck.where('maksimum')
+            const [rows]: any = await pool.query(qbCheck.query(), [insertedId, dt.minimum, dt.maksimum]);
+
+            if (rows.length === 0) {
+                pool.execute(qbBruto.insert(),
+                    [
+                        insertedId,
+                        dt.minimum,
+                        dt.maksimum,
+                        parseFloat(dt.persentasi.toFixed(2))
+                    ])
+            }
         }
-
-
 
         return NextResponse.json({ message: "Saved successfully", success: true });
     } catch (error) {

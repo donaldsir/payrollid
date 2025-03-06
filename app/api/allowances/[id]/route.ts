@@ -12,10 +12,10 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     return NextResponse.json(rows[0]);
   } catch (error) {
     if (typeof error === "string") {
-      console.error("Error inserting data:", error.toUpperCase());
+      console.error("Error fetching data:", error.toUpperCase());
       return NextResponse.json({ error: error.toUpperCase() }, { status: 500 });
     } else if (error instanceof Error) {
-      console.error("Error inserting data:", error.message);
+      console.error("Error fetching data:", error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }
@@ -40,10 +40,10 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
     return NextResponse.json({ message: "Updated successfully", success: true });
   } catch (error) {
     if (typeof error === "string") {
-      console.error("Error inserting data:", error.toUpperCase());
+      console.error("Error updating data:", error.toUpperCase());
       return NextResponse.json({ success: false, error: error.toUpperCase() }, { status: 500 });
     } else if (error instanceof Error) {
-      console.error("Error inserting data:", error.message);
+      console.error("Error updating data:", error.message);
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
   }
@@ -60,10 +60,10 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
     return NextResponse.json({ message: "Deleted successfully", success: true });
   } catch (error) {
     if (typeof error === "string") {
-      console.error("Error inserting data:", error.toUpperCase());
+      console.error("Error deleting data:", error.toUpperCase());
       return NextResponse.json({ success: false, error: error.toUpperCase() }, { status: 500 });
     } else if (error instanceof Error) {
-      console.error("Error inserting data:", error.message);
+      console.error("Error deleting data:", error.message);
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
   }
