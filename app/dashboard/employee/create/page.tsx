@@ -30,7 +30,6 @@ export default function Page() {
         { id: 1, label: "Married (K)" },
     ];
 
-
     const router = useRouter()
     const showToast = useCustomToast();
 

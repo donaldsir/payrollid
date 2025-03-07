@@ -1,5 +1,11 @@
 // app/layout.tsx
 import { Providers } from './providers'
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Payroll ID',
+  description: 'Payroll Tax Indonesia',
+};
 
 export default function RootLayout({
   children,

@@ -15,7 +15,7 @@ import {
     getPaginationRowModel,
     flexRender
 } from "@tanstack/react-table";
-import { Allowances } from "@/app/interfaces"
+import { Employee } from "@/app/interfaces"
 import { GrCaretPrevious, GrCaretNext } from "react-icons/gr"
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi"
 import LoadingOverlay from "@/app/lib/loading_overlay";
@@ -24,12 +24,20 @@ export default function Page() {
     const router = useRouter();
     const [filter, setFilter] = useState("");
     const [pageSize, setPageSize] = useState(10); // Set jumlah data per halaman
-    const [dataTable, setDataTable] = useState<Array<Allowances>>([]);
+    const [dataTable, setDataTable] = useState<Array<Employee>>([]);
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [isDeleteOpen, setDeleteOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const showToast = useCustomToast()
 
+    const marital_status = [
+        { id: 0, label: "Single (TK)" },
+        { id: 1, label: "Married (K)" },
+    ];
+
+    function getMaritalStatusById(id: number) {
+        return marital_status.find((status) => status.id === id) || null;
+    }
 
     const getData = useCallback(async () => {
         setLoading(true)
@@ -76,6 +84,15 @@ export default function Page() {
         columns: [
             { accessorKey: "nama_pegawai", header: "Name" },
             { accessorKey: "jabatan", header: "Designation" },
+            {
+                accessorKey: "status",
+                header: "Marital Status",
+                cell: ({ row }) => (
+                    <Box>
+                        {getMaritalStatusById(row.original.status)?.label}/{row.original.tanggungan}
+                    </Box>
+                ),
+            },
             {
                 accessorKey: "aksi",
                 header: "Actions",

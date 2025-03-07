@@ -70,7 +70,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                 <AccordionItem border="none" >
                     <h2>
                         <AccordionButton _hover={{ bg: "gray.700" }} borderRadius="md" px="2">
-                            <Box flex="1" textAlign="left">Data Master</Box>
+                            <Box flex="1" textAlign="left">Data master</Box>
                             <AccordionIcon />
                         </AccordionButton>
                     </h2>
@@ -84,7 +84,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                 </AccordionItem>
             </Accordion>
 
-            <NavItem href="/dashboard/settings" label="Settings" onClose={onClose} />
+            <NavItem href="/dashboard/payslip" label="Payslip" onClose={onClose} />
         </VStack>
     )
 }
