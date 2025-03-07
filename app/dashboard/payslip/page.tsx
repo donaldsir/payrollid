@@ -220,8 +220,8 @@ export default function Page() {
                 <Text fontSize='sm' textAlign="center">{jabatan}</Text>
             </SimpleGrid>
 
-            <Grid templateColumns='repeat(2, 1fr)' gap={10} mt={4} background="gray.50" p={4}>
-                <GridItem>
+            <Grid templateColumns='repeat(2, 1fr)' gap={4} mt={4} >
+                <GridItem background="gray.50" p={4}>
                     <Heading size='xs' mb={2}>EARNINGS</Heading>
                     {detail_bruto.map((row: any, index) => (
                         <Grid key={index} templateColumns='repeat(2, 1fr)' gap={10} p={1}>
@@ -230,7 +230,7 @@ export default function Page() {
                         </Grid>
                     ))}
                 </GridItem >
-                <GridItem>
+                <GridItem background="gray.50" p={4}>
                     <Heading size='xs' mb={2}>DEDUCTIONS</Heading>
                     <Grid templateColumns='repeat(2, 1fr)' gap={10} p={1} >
                         <GridItem><Text fontSize="sm">Tax Income (PPh)</Text></GridItem>
@@ -239,14 +239,14 @@ export default function Page() {
                 </GridItem >
             </Grid >
 
-            <Grid templateColumns='repeat(2, 1fr)' gap={10} background="gray.100" p={2}>
-                <GridItem>
+            <Grid templateColumns='repeat(2, 1fr)' gap={4} >
+                <GridItem background="gray.100" p={4}>
                     <Grid templateColumns='repeat(2, 1fr)' gap={10} p={1}>
                         <GridItem><Text fontSize="sm" fontWeight="bold">TOTAL EARNINGS</Text></GridItem>
                         <GridItem><Text fontSize="sm" fontWeight="bold" textAlign="right">{total_bruto.toLocaleString('id-ID')}</Text></GridItem>
                     </Grid>
                 </GridItem >
-                <GridItem>
+                <GridItem background="gray.100" p={4}>
                     <Grid templateColumns='repeat(2, 1fr)' gap={10} p={1}>
                         <GridItem><Text fontSize="sm" fontWeight="bold">TOTAL DEDUCTIONS</Text></GridItem>
                         <GridItem><Text fontSize="sm" fontWeight="bold" textAlign="right">{pph.toLocaleString('id-ID')}</Text></GridItem>
