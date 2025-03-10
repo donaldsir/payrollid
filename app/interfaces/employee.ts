@@ -6,6 +6,7 @@ export interface Employee {
     status: number;
     tanggungan: number;
     gaji_pokok: number;
+    npwp: string;
 }
 
 export interface EmployeeAllowance {

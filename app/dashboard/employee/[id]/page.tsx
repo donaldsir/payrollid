@@ -19,6 +19,7 @@ export default function Page() {
     const [status, setStatus] = useState(0)
     const [tanggungan, setTanggungan] = useState(0)
     const [gaji_pokok, setGajiPokok] = useState(0)
+    const [npwp, setNPWP] = useState('')
     const [nominal, setNominal] = useState(0)
     const [id_tunjangan, setIdTunjangan] = useState(0)
     const [tunjangan, setTunjangan] = useState<Array<Allowances>>([])
@@ -68,6 +69,7 @@ export default function Page() {
         setStatus(data?.pegawai.status || 0);
         setTanggungan(data?.pegawai.tanggungan || 0);
         setGajiPokok(data?.pegawai.gaji_pokok || 0);
+        setNPWP(data?.pegawai.npwp || "");
         setTunjanganPegawai(data?.tunjangan_pegawai || []);
 
         setLoading(false)
@@ -111,6 +113,7 @@ export default function Page() {
         formData.append('status', status.toString())
         formData.append('tanggungan', tanggungan.toString())
         formData.append('gaji_pokok', gaji_pokok.toString())
+        formData.append('npwp', npwp)
         formData.append("tunjangan_pegawai", JSON.stringify(tunjangan_pegawai));
         console.log(JSON.stringify(tunjangan_pegawai));
 
@@ -221,7 +224,15 @@ export default function Page() {
                             />
                         </FormControl>
 
-                        <Box flex="2"></Box>
+                        <FormControl flex="2">
+                            <FormLabel fontSize="sm">Tax Number (NPWP)</FormLabel>
+                            <Input
+                                size="sm"
+                                type="text"
+                                value={npwp}
+                                onChange={(e) => { setNPWP(e.target.value) }}
+                            />
+                        </FormControl>
                     </Flex>
                 </CardBody>
             </Card>
@@ -294,7 +305,7 @@ export default function Page() {
                 <Spacer />
                 <Button size="sm" colorScheme='red' type='submit' >Save</Button>
             </Flex>
-        </form>
+        </form >
 
     )
 }

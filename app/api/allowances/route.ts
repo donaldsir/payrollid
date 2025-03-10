@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData(); // Ambil FormData dari request
 
-        const nama_tunjangan = formData.get("nama_tunjangan") as string;
-        const keterangan = formData.get("keterangan") as string;
-        const aktif = formData.get("aktif") as string;
+        const nama_tunjangan = formData.get("nama_tunjangan") as string
+        const keterangan = formData.get("keterangan") as string
+        const ptkp = formData.get("ptkp") as string
 
         // Validasi data
         if (!nama_tunjangan) {
@@ -35,9 +35,9 @@ export async function POST(req: NextRequest) {
         const qb = new QueryBuilder('tunjangan')
         qb.column('nama_tunjangan')
         qb.column('keterangan')
-        qb.column('aktif')
+        qb.column('ptkp')
 
-        await pool.execute(qb.insert(), [nama_tunjangan, keterangan, aktif]);
+        await pool.execute(qb.insert(), [nama_tunjangan, keterangan, ptkp]);
 
         return NextResponse.json({ message: "Saved successfully", success: true });
     } catch (error) {

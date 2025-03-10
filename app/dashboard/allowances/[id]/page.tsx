@@ -11,7 +11,7 @@ import LoadingOverlay from "@/app/lib/loading_overlay";
 export default function Page() {
     const [nama_tunjangan, setNamaTunjangan] = useState('')
     const [keterangan, setKeterangan] = useState('')
-    const [aktif, setAktif] = useState(1)
+    const [ptkp, setPTKP] = useState(1)
     const [loading, setLoading] = useState(false);
 
     const router = useRouter()
@@ -40,7 +40,7 @@ export default function Page() {
 
             setNamaTunjangan(data?.nama_tunjangan || "");
             setKeterangan(data?.keterangan || "");
-            setAktif(parseInt(data?.aktif) || 0);
+            setPTKP(parseInt(data?.ptkp) || 0);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -57,7 +57,7 @@ export default function Page() {
         const formData = new FormData()
         formData.append('nama_tunjangan', nama_tunjangan)
         formData.append('keterangan', keterangan)
-        formData.append('aktif', aktif.toString())
+        formData.append('ptkp', ptkp.toString())
 
         try {
             const res = await fetch(`/api/allowances/${id}`, {
@@ -99,8 +99,8 @@ export default function Page() {
                     <Input size="sm" type='text' value={keterangan} onChange={(e) => { setKeterangan(e.target.value) }} />
                 </FormControl>
 
-                <FormControl flex="1" display="flex" alignItems="center" mt={{ base: 0, md: 6 }}>
-                    <Checkbox onChange={(e) => setAktif(e.target.checked ? 1 : 0)} isChecked={aktif === 1} colorScheme='red'>Active</Checkbox>
+                <FormControl flex="2" display="flex" alignItems="center" mt={{ base: 0, md: 6 }}>
+                    <Checkbox size="sm" onChange={(e) => setPTKP(e.target.checked ? 1 : 0)} isChecked={ptkp === 1} colorScheme='red'>Non-taxable income(PTKP)</Checkbox>
                 </FormControl>
             </Flex>
 

@@ -2,13 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useCustomToast } from "@/app/lib/toast";
-import AlertConfirmation from "@/app/lib/alert_confirmation";
 import {
     Flex, Heading, Divider, FormControl, FormLabel, Input, Box, Button, Select,
     InputGroup, InputRightElement, Modal, ModalHeader, ModalBody, ModalFooter,
     ModalContent, ModalOverlay, useDisclosure, Table, Thead, Tbody,
-    Tr, Th, Td, IconButton, SimpleGrid, Text, Grid, GridItem
+    Tr, Th, Td, IconButton, SimpleGrid, Text, Grid, GridItem, Checkbox
 } from '@chakra-ui/react'
 import {
     useReactTable,
@@ -18,7 +16,6 @@ import {
     flexRender
 } from "@tanstack/react-table";
 import { GrCaretPrevious, GrCaretNext, GrCheckmark, GrEdit } from "react-icons/gr"
-import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi"
 import { FaSearch } from "react-icons/fa";
 import LoadingOverlay from "@/app/lib/loading_overlay";
 import { Employee } from "@/app/interfaces";
@@ -29,17 +26,17 @@ export default function Page() {
     const [pegawai, setPegawai] = useState<Array<Employee>>([])
     const [id_pegawai, setIdPegawai] = useState(0)
     const [nama_pegawai, setNamaPegawai] = useState('')
+    const [nama_tunjangan, setNamaTunjangan] = useState('')
     const [jabatan, setJabatan] = useState('')
     const [detail_bruto, setDetailBruto] = useState([])
-    const [total_bruto, setTotalBruto] = useState(0)
     const [tahun, setTahun] = useState(new Date().getFullYear())
     const [bulan, setBulan] = useState(new Date().getMonth())
     const [pph, setPPH] = useState(0)
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [edit_amount, setEditAmount] = useState(0)
+    const modal1 = useDisclosure(); // State untuk modal pertama
+    const modal2 = useDisclosure();
     const [filter, setFilter] = useState("")
     const [pageSize, setPageSize] = useState(10)
-
-    const showToast = useCustomToast()
 
     const months = [
         { id: 0, label: "January" },
@@ -108,11 +105,23 @@ export default function Page() {
         setIdPegawai(id);
         setNamaPegawai(filtered[0].nama_pegawai)
         setJabatan(filtered[0].jabatan)
-        onClose()
+        modal1.onClose()
     }
 
-    const editNominal = (nama_tunjangan: string) => {
+    const modalNominal = (dt: any) => {
+        setNamaTunjangan(dt.nama_tunjangan)
+        setEditAmount(dt.nominal)
+        modal2.onOpen()
+    }
 
+    const changeAmount = () => {
+        setDetailBruto((prevItems: any) =>
+            prevItems.map((item: any) =>
+                item.nama_tunjangan === nama_tunjangan ? { ...item, nominal: edit_amount } : item
+            )
+        );
+
+        modal2.onClose()
     }
 
     const calculate = async () => {
@@ -129,7 +138,7 @@ export default function Page() {
         });
 
         const data = await res.json();
-        setTotalBruto(bruto)
+
         setPPH(data)
         setLoading(false)
     }
@@ -168,7 +177,7 @@ export default function Page() {
                     <InputGroup>
                         <Input size="sm" value={nama_pegawai} onChange={() => { }} isReadOnly />
                         <InputRightElement boxSize={8}>
-                            <FaSearch color='crimson' onClick={onOpen} />
+                            <FaSearch color='crimson' onClick={modal1.onOpen} />
                         </InputRightElement>
                     </InputGroup>
                 </FormControl>
@@ -180,6 +189,7 @@ export default function Page() {
                         <Tr>
                             <Th ></Th>
                             <Th>Payroll Component</Th>
+                            <Th>Non-Taxable (PTKP)</Th>
                             <Th textAlign="right">Amount</Th>
 
                         </Tr>
@@ -192,17 +202,23 @@ export default function Page() {
                                         size="xs"
                                         aria-label="Edit Amount"
                                         icon={<GrEdit />}
-                                        onClick={() => editNominal(row.nama)}
+                                        onClick={() => modalNominal(row)}
                                         colorScheme="red"
                                     />
                                 </Td>
-                                <Td>{row.nama}</Td>
+                                <Td>{row.nama_tunjangan}</Td>
+                                <Td>
+                                    <Box display="flex" justifyContent="center">
+                                        <Checkbox isChecked={row.ptkp === 1} colorScheme="red" isReadOnly />
+                                    </Box>
+                                </Td>
+
                                 <Td textAlign="right">{row.nominal.toLocaleString('id-ID')}</Td>
                             </Tr>
                         ))}
                         <Tr>
-                            <Td fontWeight="bold" colSpan={2}>Total Bruto</Td>
-                            <Td textAlign="right" fontWeight="bold">{total_bruto}</Td>
+                            <Td fontWeight="bold" colSpan={3}>Total Bruto</Td>
+                            <Td textAlign="right" fontWeight="bold">{detail_bruto.reduce((sum: number, row: any) => sum + row.nominal, 0).toLocaleString('id-ID')}</Td>
                         </Tr>
                     </Tbody>
                 </Table>
@@ -225,7 +241,7 @@ export default function Page() {
                     <Heading size='xs' mb={2}>EARNINGS</Heading>
                     {detail_bruto.map((row: any, index) => (
                         <Grid key={index} templateColumns='repeat(2, 1fr)' gap={10} p={1}>
-                            <GridItem><Text fontSize="sm">{row.nama}</Text></GridItem>
+                            <GridItem><Text fontSize="sm">{row.nama_tunjangan}</Text></GridItem>
                             <GridItem><Text fontSize="sm" textAlign="right">{row.nominal.toLocaleString('id-ID')}</Text></GridItem>
                         </Grid>
                     ))}
@@ -243,7 +259,7 @@ export default function Page() {
                 <GridItem background="gray.100" p={4}>
                     <Grid templateColumns='repeat(2, 1fr)' gap={10} p={1}>
                         <GridItem><Text fontSize="sm" fontWeight="bold">TOTAL EARNINGS</Text></GridItem>
-                        <GridItem><Text fontSize="sm" fontWeight="bold" textAlign="right">{total_bruto.toLocaleString('id-ID')}</Text></GridItem>
+                        <GridItem><Text fontSize="sm" fontWeight="bold" textAlign="right">{detail_bruto.reduce((sum: number, row: any) => sum + row.nominal, 0).toLocaleString('id-ID')}</Text></GridItem>
                     </Grid>
                 </GridItem >
                 <GridItem background="gray.100" p={4}>
@@ -255,10 +271,10 @@ export default function Page() {
             </Grid >
             <Grid templateColumns='repeat(2, 1fr)' gap={10} p={3} mt={6} background="red.700" color="white">
                 <GridItem><Heading fontWeight="bold" size="md">TAKE HOME PAY</Heading></GridItem>
-                <GridItem><Heading fontWeight="bold" size="md" textAlign="right">{(total_bruto - pph).toLocaleString('id-ID')}</Heading></GridItem>
+                <GridItem><Heading fontWeight="bold" size="md" textAlign="right">{(detail_bruto.reduce((sum: number, row: any) => sum + row.nominal, 0) - pph).toLocaleString('id-ID')}</Heading></GridItem>
             </Grid>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={modal1.isOpen} onClose={modal1.onClose}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader fontSize="sm">List of Employee</ModalHeader>
@@ -329,8 +345,35 @@ export default function Page() {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button size="sm" variant="outline" colorScheme='red' mr={3} onClick={onClose}>
+                        <Button size="sm" variant="outline" colorScheme='red' mr={3} onClick={modal1.onClose}>
                             Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <Modal isOpen={modal2.isOpen} onClose={modal2.onClose}>
+                <ModalContent>
+                    <ModalHeader fontSize="sm">{nama_pegawai} - {nama_tunjangan}</ModalHeader>
+                    <ModalBody>
+                        <FormControl>
+                            <FormLabel fontSize="sm">Amount </FormLabel>
+                            <Input
+                                size="sm"
+                                type="number"
+                                value={edit_amount}
+                                onChange={(e) => {
+                                    const value = e.target.value.trim(); // Hapus spasi di awal & akhir
+                                    setEditAmount(value === "" ? 0 : parseInt(value, 10));
+                                }}
+                            />
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button size="sm" variant="outline" colorScheme='red' mr={2} onClick={modal2.onClose}>
+                            Close
+                        </Button>
+                        <Button size="sm" colorScheme='red' onClick={changeAmount}>
+                            Change
                         </Button>
                     </ModalFooter>
                 </ModalContent>

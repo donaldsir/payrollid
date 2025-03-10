@@ -36,6 +36,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
         const status = formData.get("status")
         const tanggungan = formData.get("tanggungan")
         const gaji_pokok = formData.get("gaji_pokok")
+        const npwp = formData.get("npwp")
 
         const tunjangan_pegawai: any = formData.get("tunjangan_pegawai");
         const json_tunjangan_pegawai = JSON.parse(tunjangan_pegawai);
@@ -47,6 +48,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
         qb.column('status')
         qb.column('tanggungan')
         qb.column('gaji_pokok')
+        qb.column('npwp')
         qb.where("id");
         await pool.execute(qb.update(), [
             nama_pegawai,
@@ -55,6 +57,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
             status,
             tanggungan,
             gaji_pokok,
+            npwp,
             id
         ]);
 

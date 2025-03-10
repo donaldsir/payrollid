@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
             ]
         );
 
-        const pph = Math.round((bruto * etr[0].persentasi / 100) * 1.2)
+        let constanta = p[0].npwp ? 1 : 1.2;
+        const pph = Math.round((bruto * etr[0].persentasi / 100) * constanta)
 
         return NextResponse.json(pph);
     } catch (error) {

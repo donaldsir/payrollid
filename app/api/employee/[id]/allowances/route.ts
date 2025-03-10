@@ -15,19 +15,22 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
         qbTP.where('tunjangan_pegawai.id_pegawai')
         qbTP.column('tunjangan.id')
         qbTP.column('tunjangan.nama_tunjangan')
+        qbTP.column('tunjangan.ptkp')
         qbTP.column('tunjangan_pegawai.nominal')
         const [tunjangan_pegawai]: any = await pool.query(qbTP.query(), [id]);
 
         const data = [
             {
-                nama: "Basic Salary",
+                nama_tunjangan: "Basic Salary",
+                ptkp: 0,
                 nominal: pegawai[0].gaji_pokok
             }
         ]
 
         for (let tp of tunjangan_pegawai) {
             let newItem = {
-                nama: tp.nama_tunjangan,
+                nama_tunjangan: tp.nama_tunjangan,
+                ptkp: tp.ptkp,
                 nominal: tp.nominal,
             }
 

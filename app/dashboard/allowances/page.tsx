@@ -77,11 +77,11 @@ export default function Page() {
             { accessorKey: "nama_tunjangan", header: "Name" },
             { accessorKey: "keterangan", header: "Description" },
             {
-                accessorKey: "aktif",
-                header: "Active",
+                accessorKey: "ptkp",
+                header: "Non-Taxable(PTKP)",
                 cell: ({ row }) => (
                     <Box display="flex" justifyContent="center">
-                        <Checkbox isChecked={row.original.aktif === 1} colorScheme="red" isReadOnly />
+                        <Checkbox isChecked={row.original.ptkp === 1} colorScheme="red" isReadOnly />
                     </Box>
                 ),
             },
@@ -135,7 +135,7 @@ export default function Page() {
                         {table.getHeaderGroups().map((headerGroup) => (
                             <Tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <Th key={header.id} textAlign={["Active", "Actions"].includes(header.column.columnDef.header as string) ? "center" : "left"}>
+                                    <Th key={header.id} textAlign={["Active", "Actions", "Non-Taxable(PTKP)"].includes(header.column.columnDef.header as string) ? "center" : "left"}>
                                         {flexRender(header.column.columnDef.header, header.getContext())}
                                     </Th>
                                 ))}

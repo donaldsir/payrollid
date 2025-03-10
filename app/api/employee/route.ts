@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
         const status = formData.get("status")
         const tanggungan = formData.get("tanggungan")
         const gaji_pokok = formData.get("gaji_pokok")
+        const npwp = formData.get("npwp")
 
         const tunjangan_pegawai: any = formData.get("tunjangan_pegawai");
         const json_tunjangan_pegawai = JSON.parse(tunjangan_pegawai);
-
 
         // Validasi data
         if (!nama_pegawai) {
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
         qb.column('status')
         qb.column('tanggungan')
         qb.column('gaji_pokok')
+        qb.column('npwp')
 
         const [result]: any = await pool.execute(qb.insert(),
             [
@@ -54,7 +55,8 @@ export async function POST(req: NextRequest) {
                 jabatan,
                 status,
                 tanggungan,
-                gaji_pokok
+                gaji_pokok,
+                npwp
             ]);
         const insertedId = result.insertId;
 

@@ -10,7 +10,7 @@ import {
 export default function Page() {
     const [nama_tunjangan, setNamaTunjangan] = useState('')
     const [keterangan, setKeterangan] = useState('')
-    const [aktif, setAktif] = useState(1)
+    const [ptkp, setPTKP] = useState(0)
 
     const router = useRouter()
     const showToast = useCustomToast();
@@ -18,7 +18,7 @@ export default function Page() {
     const reset = () => {
         setNamaTunjangan('')
         setKeterangan('')
-        setAktif(1)
+        setPTKP(0)
     }
 
     const store = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -26,7 +26,7 @@ export default function Page() {
         const formData = new FormData()
         formData.append('nama_tunjangan', nama_tunjangan)
         formData.append('keterangan', keterangan)
-        formData.append('aktif', aktif.toString())
+        formData.append('ptkp', ptkp.toString())
 
         try {
             const res = await fetch("/api/allowances", {
@@ -67,8 +67,8 @@ export default function Page() {
                     <Input size="sm" type='text' value={keterangan} onChange={(e) => { setKeterangan(e.target.value) }} />
                 </FormControl>
 
-                <FormControl flex="1" display="flex" alignItems="center" mt={{ base: 0, md: 6 }}>
-                    <Checkbox onChange={(e) => setAktif(e.target.checked ? 1 : 0)} isChecked={aktif === 1} colorScheme='red'>Active</Checkbox>
+                <FormControl flex="2" display="flex" alignItems="center" mt={{ base: 0, md: 6 }}>
+                    <Checkbox size="sm" onChange={(e) => setPTKP(e.target.checked ? 1 : 0)} isChecked={ptkp === 1} colorScheme='red'>Non-taxable income(PTKP)</Checkbox>
                 </FormControl>
             </Flex>
 

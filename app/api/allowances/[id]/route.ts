@@ -28,14 +28,14 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
 
     const nama_tunjangan = formData.get("nama_tunjangan") as string;
     const keterangan = formData.get("keterangan") as string;
-    const aktif = formData.get("aktif") as string;
+    const ptkp = formData.get("ptkp") as string;
 
     const qb = new QueryBuilder("tunjangan");
     qb.column("nama_tunjangan");
     qb.column("keterangan");
-    qb.column("aktif");
+    qb.column("ptkp");
     qb.where("id");
-    await pool.execute(qb.update(), [nama_tunjangan, keterangan, aktif, id]);
+    await pool.execute(qb.update(), [nama_tunjangan, keterangan, ptkp, id]);
 
     return NextResponse.json({ message: "Updated successfully", success: true });
   } catch (error) {
